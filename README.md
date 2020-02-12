@@ -1,6 +1,9 @@
 # sinsy-project
 
-## Programming Project 1
+## Algorithmic Composition Experiments
+
+This fork is intended to expand the capability of the original stochastic song implementation, and upload bug fixes from my local version.
+ -- A.L. Uitdenbogerd
 
 This is a collection of Python scripts for interacting with Sinsy.
 
