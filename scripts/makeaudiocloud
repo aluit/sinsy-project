@@ -2,7 +2,7 @@
 
 python3 word-count.py $1 | sort -k 2 -n -r > $1.freqs
 sort $1.freqs > $1.sortedfreqs
-python3 word-subtraction.py $1.freqs /usr/home/sandra/tmp/sandra/rocs/wordcomp/stoplist_modified > $1.filtered
+python3 word-subtraction.py $1.freqs stoplist_modified > $1.filtered
 join $1.sortedfreqs $1.filtered  | sort -k 2 -n -r | head -n 30 > $1.list
 
 
