@@ -2,7 +2,7 @@
 
 ## Algorithmic Composition Experiments
 
-This fork is intended to expand the capability of the original stochastic song implementation, and upload bug fixes from my local version.
+This fork is intended to expand the capability of the original stochastic song implementation, and upload bug fixes from my local version. It also includes the scripts for generating audio word clouds as per the World Cloud paper.
  -- A.L. Uitdenbogerd
 
 This is a collection of Python scripts for interacting with Sinsy.
