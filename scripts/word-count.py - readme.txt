@@ -1,0 +1,24 @@
+Requirements:
+To run on Mac, install python 3 (download installer from python.org).
+
+
+usage: word-count.py [-h] [-v] [-m Count] [-e Encoding] [filename [filename ...]]
+
+Find the most common words in textfiles.
+
+positional arguments:
+filename     one or more text files
+
+optional arguments:
+-h, --help   show this help message and exit
+-v           output word counts
+-m Count     ignore words which occur less than Count times (default = 5)
+-e Encoding  utf-8, utf-16 or ascii (default=utf-8)
+
+
+Usage example - extract the most common words from two utf-16 text files,
+    ignorning words which occur fewer than 4 times. Display the most common
+    words and their counts:
+
+    word-count.py -v -m 4 -e utf-16 text1.txt text2.txt
+
