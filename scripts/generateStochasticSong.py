@@ -59,9 +59,13 @@ syllableDictionary = {
 }
 
 def breakIntoSyllables(text):
-    text = text.decode('UTF-8').lower()
-    text = re.sub('[^a-zA-Z \n]', ' ', text)
-    text = re.split(r'\s+', text)
+    text = text.decode('UTF-8').lower() # converts all to lower case
+    text = re.sub('[^a-zA-Z \n\-]', ' ', text) # Anything that isn't alpha or whitespace replaced with space
+#    print text
+    text = re.sub('\-', '- ', text) # Put a space after hyphens
+#    print text
+    text = re.split(r'\s+', text) # splits into "words"
+#    print text
     results = []
     for word in text:
         if not len(word):
@@ -69,11 +73,19 @@ def breakIntoSyllables(text):
         if word in syllableDictionary:
             results.extend(re.split(r'\s+', syllableDictionary[word]))
         else:
-            sys.stderr.write("Unknown word '" + word + "'. Add it to the dictionary by editing this script.\n")
+#            sys.stderr.write("Unknown word '" + word + "'. Add it to the dictionary by editing this script.\n")
             results.append(word)
     return results
 
-
+#################3
+#
+# shiftNote
+# Defines a note for musicXML
+# Parameters
+#  note is a note name used as an offset
+#  alter is for sharps or flats (of the offset)
+#  octave is the octave of the offset note 
+#  delta is the desired note relative to the offset note
 def shiftNote(note, alter, octave, delta):
     notes = [ 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B' ]
     numberOfNotes = len(notes)
@@ -97,6 +109,8 @@ def generateXML(arr, tempo):
     part_list = ET.SubElement(score_partwise, 'part-list')
     score_part = ET.SubElement(part_list, 'score-part')
     score_part.attrib['id'] = 'P1'
+    part_name = ET.SubElement(score_part, 'part-name');
+    part_name.text = 'Melody'
     part = ET.SubElement(score_partwise, 'part')
     part.attrib['id'] = 'P1'
     measureNumber = 1
@@ -105,9 +119,20 @@ def generateXML(arr, tempo):
         measure = ET.SubElement(part, 'measure')
         measure.attrib['number'] = str(measureNumber)
         if measureNumber == 1:
-            direction = ET.SubElement(measure, 'direction')
-            sound = ET.SubElement(direction, 'sound')
-            sound.attrib['tempo'] = tempo
+                attributes = ET.SubElement(measure, 'attributes')
+                divisions = ET.SubElement(attributes, 'divisions')
+                divisions.text = '12'
+                key = ET.SubElement( attributes, 'key')
+                fifths = ET.SubElement( key, 'fifths')
+                fifths.text = '0'
+                time = ET.SubElement(attributes, 'time')
+                beats = ET.SubElement( time, 'beats')
+                beats.text = '2'
+                beattype = ET.SubElement( time, 'beat-type')
+                beattype.text = '4'
+                direction = ET.SubElement(measure, 'direction')
+                sound = ET.SubElement(direction, 'sound')
+                sound.attrib['tempo'] = tempo
         measureNumber += 1
         note = ET.SubElement(measure, 'note')
 #        type = ET.SubElement(note, 'type')
@@ -138,17 +163,22 @@ def generateStochasticMelody(scale, numberOfNotes):
     return results
 
 def generateStochasticSong(verseScale, chorusScale):
-    riff = generateStochasticMelody(verseScale, 4)
+    riff = generateStochasticMelody(verseScale, 8)
     verse = []
     verse.extend(riff)
+    verse.append(99)
+    verse.append(99)
+    verse.append(99)
+    verse.append(99)
     verse.extend(riff)
-    verse.extend(riff)
-    verse.append(verseScale[0])
+   # verse.extend(riff)
+   # verse.append(verseScale[0])
+    verse.append(99)
     verse.append(99)
     verse.append(99)
     verse.append(99)
     chorus = generateStochasticMelody(chorusScale, 7)
-    chorus[0] = chorusScale[-1];
+  #  chorus[0] = chorusScale[-1];
     chorus.append(99)
     song = []
     song.extend(verse)
@@ -166,7 +196,7 @@ def generateStochasticSong(verseScale, chorusScale):
     return song
 
 def generateStochasticSongMajor():
-    verseScale = [0, 2, 4, 5 ]
+    verseScale = [0, 2, 4, 7 ]
     chorusScale = [0, 2, 4, 5, 7, -1, 9]
     return generateStochasticSong(verseScale, chorusScale)
 
@@ -177,7 +207,7 @@ def generateStochasticSongMinor():
 
 def generateStochasticSongBlues():
     verseScale = [0, 3, 5, 6];
-    chorusScale = [0, 3, 5, 7, 10];
+    chorusScale = [0, 3, 5, 6, 7, 10];
     return generateStochasticSong(verseScale, chorusScale)
     
 
@@ -190,7 +220,7 @@ if __name__ == "__main__":
     parser.add_argument("songname", help="name of the song")
     parser.add_argument("lyricsfile", type=argparse.FileType('r'), help="name of the lyrics file")
     parser.add_argument("scale", nargs='?', default='major', help="'major', 'minor', or 'blues', default is 'major'")
-    parser.add_argument("--tempo", default='700', help="tempo, default is 700")
+    parser.add_argument("--tempo", default='300', help="tempo, default is 300")
     args = parser.parse_args()
 
     generateSong = None
