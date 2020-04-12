@@ -52,16 +52,17 @@ def generateShellScript(parts, xmlfile, outputdir):
         print "#   ", elt
         inxmlfile = asQuotedString(xmlfile)
         tempxmlfile = asQuotedString(outputdir + '/' + key + '.xml')
+        predynamicswavfile = asQuotedString(outputdir + '/' + key + 'pd.wav')
         tempwavfile = asQuotedString(outputdir + '/' + key + '.wav')
         allWavFiles.append(tempwavfile)
         if elt['chord']:
-            print "python keepPart.py %s %s | python useChordNotes.py >%s" % (
+            print "python2 keepPart.py %s %s | python2 useChordNotes.py >%s" % (
                 inxmlfile,
                 elt['part'],
                 tempxmlfile
             )
         elif elt['voice'] != '1':
-            print "python keepPart.py %s %s | python useVoice.py - %s >%s" % (
+            print "python2 keepPart.py %s %s | python2 useVoice.py - %s >%s" % (
                 inxmlfile,
                 elt['part'],
                 elt['voice'],
@@ -69,17 +70,22 @@ def generateShellScript(parts, xmlfile, outputdir):
             )
 
         else:
-            print "python keepPart.py %s %s >%s" % (
+            print "python2 keepPart.py %s %s >%s" % (
                 inxmlfile,
                 elt['part'],
                 tempxmlfile
             )
-        print "python upload.py %s %s" % (tempxmlfile, tempwavfile)
+#        print "python2 upload.py %s %s" % (tempxmlfile, tempwavfile)
+        print "python2 upload.py  --spkr 4 %s %s" % (tempxmlfile, predynamicswavfile)
+        print "python2 applyDynamicsToWAV.py --inxml %s --inwav %s --outwav %s" % (
+               tempxmlfile,
+                predynamicswavfile,
+                tempwavfile )
     print "# Mix"
     print "sox -m %s %s" % (' '.join(allWavFiles), mixwavfile)
     print "sox %s %s gain -n" % (mixwavfile, normwavfile)
     print "sox %s %s reverb" % (normwavfile, reverbwavfile)
-    print "python soxCompand.py %s %s" % (reverbwavfile, outputwavfile)
+    print "python2 soxCompand.py %s %s" % (reverbwavfile, outputwavfile)
     
 
 #
